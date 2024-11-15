@@ -1,0 +1,58 @@
+diff --git a/Android.bp b/Android.bp
+index 5df1c8cdc..7bacdd74d 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -36,6 +36,7 @@ rust_binary {
+     name: "crosvm",
+     defaults: ["crosvm_inner_defaults"],
+     host_supported: true,
++    prefer_rlib: true,
+     crate_name: "crosvm",
+     cargo_env_compat: true,
+     cargo_pkg_version: "0.1.0",
+@@ -53,7 +54,6 @@ rust_binary {
+         "gdbstub_arch",
+         "geniezone",
+         "gfxstream",
+-        "gfxstream_stub",
+         "gpu",
+         "gpu_display",
+         "gunyah",
+@@ -134,6 +134,10 @@ rust_binary {
+         },
+         android: {
+             shared_libs: [
++                // TODO(b/332677108): remove libc++ when display service is rewritten in rust.
++                "libc++",
++                "libbinder_ndk",
++                "libnativewindow",
+                 "libprocessgroup",
+             ],
+         },
+@@ -142,6 +146,18 @@ rust_binary {
+                 "libprocessgroup",
+             ],
+         },
++        linux_bionic_arm64: {
++            relative_install_path: "aarch64-linux-bionic",
++        },
++        linux_glibc_x86_64: {
++            relative_install_path: "x86_64-linux-gnu",
++        },
++        linux_musl_x86_64: {
++            relative_install_path: "x86_64-linux-musl",
++        },
++        linux_musl_arm64: {
++            relative_install_path: "aarch64-linux-musl",
++        },
+     },
+     ld_flags: [
+         "-Wl,--rpath,\\$$ORIGIN",
+@@ -176,7 +192,6 @@ rust_test {
+         "gdbstub_arch",
+         "geniezone",
+         "gfxstream",
+-        "gfxstream_stub",
+         "gpu",
+         "gpu_display",
+         "gunyah",
